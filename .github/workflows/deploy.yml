@@ -36,7 +36,7 @@ jobs:
             --allow-unauthenticated \
             --set-env-vars STUDENT_ID=s02,BATCH_ID=batch2,GOOGLE_CLOUD_PROJECT=xro-lab
 
-      - name: Allow public access
+      - name: Allow public access1
         run: |
           gcloud run services add-iam-policy-binding $SERVICE \
             --region $REGION --member=allUsers --role=roles/run.invoker
