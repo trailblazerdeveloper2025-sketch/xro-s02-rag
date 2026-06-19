@@ -27,7 +27,6 @@ jobs:
 
       - name: Build and push image
         run: gcloud builds submit --tag $IMAGE --async fastapi_app/ 
-        echo "Build submitted. Check Cloud Build console for progress."
 
       - name: Deploy to Cloud Run
         run: |
