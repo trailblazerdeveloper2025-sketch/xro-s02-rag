@@ -1,0 +1,42 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+
+env:
+  PROJECT_ID: xro-lab
+  REGION: asia-south1
+  SERVICE: fastapi-s02
+  IMAGE: asia-south1-docker.pkg.dev/xro-lab/xro-repo/fastapi-s02
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push image
+        run: gcloud builds submit --tag $IMAGE fastapi_app/
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy $SERVICE \
+            --image $IMAGE \
+            --region $REGION \
+            --allow-unauthenticated \
+            --set-env-vars STUDENT_ID=s02,BATCH_ID=batch2,GOOGLE_CLOUD_PROJECT=xro-lab
+
+      - name: Allow public access
+        run: |
+          gcloud run services add-iam-policy-binding $SERVICE \
+            --region $REGION --member=allUsers --role=roles/run.invoker

@@ -1,0 +1,19 @@
+
+Run these commands in a terminal, one at a time:
+
+# 1. Build the image with Cloud Build
+gcloud builds submit \
+  --tag asia-south1-docker.pkg.dev/xro-lab/xro-repo/rag-assistant-s02 .
+
+# 2. Deploy to Cloud Run
+gcloud run deploy rag-assistant-s02 \
+  --image asia-south1-docker.pkg.dev/xro-lab/xro-repo/rag-assistant-s02 \
+  --region asia-south1 \
+  --allow-unauthenticated \
+  --set-env-vars STUDENT_ID=s02,BATCH_ID=batch2,GOOGLE_CLOUD_PROJECT=xro-lab
+
+# 3. Get your permanent URL
+gcloud run services describe rag-assistant-s02 \
+  --region asia-south1 --format="value(status.url)"
+
+Build typically takes 3-5 minutes. You will get a permanent https://...run.app URL.
